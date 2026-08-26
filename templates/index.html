@@ -1,0 +1,1870 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Network Monitoring System</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #1f2937;
+        }
+
+        /* =========================
+           HEADER
+        ========================== */
+
+        header {
+            background: #1f2937;
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        header p {
+            margin-top: 8px;
+            color: #d1d5db;
+        }
+
+        /* =========================
+           USER BAR
+        ========================== */
+
+        .user-bar {
+            background: white;
+            padding: 14px 30px;
+            text-align: right;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+
+        .logout-button {
+            display: inline-block;
+            margin-left: 15px;
+            padding: 8px 16px;
+            background: #1f2937;
+            color: white;
+            text-decoration: none;
+            border-radius: 7px;
+        }
+
+        .logout-button:hover {
+            background: #111827;
+        }
+
+        /* =========================
+           CONTAINER
+        ========================== */
+
+        .container {
+            padding: 30px;
+            max-width: 1400px;
+            margin: auto;
+        }
+
+        h2 {
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+
+        /* =========================
+           CARDS
+        ========================== */
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            font-size: 17px;
+        }
+
+        .value {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 15px;
+            word-break: break-word;
+        }
+
+        /* =========================
+           CHART
+        ========================== */
+
+        .chart-container {
+            background: white;
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .chart-container h2 {
+            margin-top: 0;
+        }
+
+        /* =========================
+           ALERTS
+        ========================== */
+
+        .alert {
+            background: white;
+            padding: 18px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            font-weight: bold;
+        }
+
+        .alert.warning {
+            border-left: 6px solid orange;
+        }
+
+        .alert.danger {
+            border-left: 6px solid red;
+        }
+
+        .alert.success {
+            border-left: 6px solid green;
+        }
+
+        /* =========================
+           TABLE
+        ========================== */
+
+        .table-container {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        th {
+            background: #f3f4f6;
+        }
+
+        .online {
+            color: green;
+            font-weight: bold;
+        }
+
+        /* =========================
+           BUTTONS
+        ========================== */
+
+        button,
+        .download-button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #1f2937;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        button:hover,
+        .download-button:hover {
+            background: #111827;
+        }
+
+        .download-button {
+            margin-left: 10px;
+        }
+
+        /* =========================
+           FOOTER
+        ========================== */
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            color: #6b7280;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================== */
+
+        @media (max-width: 900px) {
+
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            header h1 {
+                font-size: 24px;
+            }
+
+            .user-bar {
+                text-align: center;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     HEADER
+========================== -->
+
+<header>
+
+    <h1>
+        Network Monitoring System
+    </h1>
+
+    <p>
+        Real-Time Network & System Monitoring Dashboard
+    </p>
+
+</header>
+
+
+<!-- =========================
+     USER / LOGOUT BAR
+========================== -->
+
+<div class="user-bar">
+
+    Welcome,
+    <strong>{{ username }}</strong>
+
+    <a
+        href="/logout"
+        class="logout-button">
+
+        Logout
+
+    </a>
+
+</div>
+
+
+<div class="container">
+
+
+<!-- ==================================================
+     FEATURE 1
+     NETWORK TRAFFIC MONITORING
+=================================================== -->
+
+<h2>
+    Network Traffic Monitoring
+</h2>
+
+
+<div class="cards">
+
+
+    <div class="card">
+
+        <h3>
+            Download Speed
+        </h3>
+
+        <div
+            class="value"
+            id="download">
+
+            0 KB/s
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>
+            Upload Speed
+        </h3>
+
+        <div
+            class="value"
+            id="upload">
+
+            0 KB/s
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>
+            Total Received
+        </h3>
+
+        <div
+            class="value"
+            id="received">
+
+            0 MB
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>
+            Total Sent
+        </h3>
+
+        <div
+            class="value"
+            id="sent">
+
+            0 MB
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<!-- LIVE TRAFFIC CHART -->
+
+<div class="chart-container">
+
+    <h2>
+        Live Network Traffic
+    </h2>
+
+    <canvas id="trafficChart"></canvas>
+
+</div>
+
+
+
+<!-- ==================================================
+     FEATURE 2
+     SYSTEM MONITORING
+=================================================== -->
+
+<h2>
+    System Monitoring
+</h2>
+
+
+<div class="cards">
+
+
+    <div class="card">
+
+        <h3>
+            CPU Usage
+        </h3>
+
+        <div
+            class="value"
+            id="cpu">
+
+            0%
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>
+            Memory Usage
+        </h3>
+
+        <div
+            class="value"
+            id="memory">
+
+            0%
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>
+            Disk Usage
+        </h3>
+
+        <div
+            class="value"
+            id="disk">
+
+            0%
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>
+            Host Name
+        </h3>
+
+        <div
+            class="value"
+            id="hostname">
+
+            Loading...
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+<!-- ==================================================
+     FEATURE 3
+     NETWORK INFORMATION
+=================================================== -->
+
+<h2>
+    Network Information
+</h2>
+
+
+<div class="cards">
+
+
+    <div class="card">
+
+        <h3>
+            Network Interface
+        </h3>
+
+        <div
+            class="value"
+            id="interface">
+
+            Loading...
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>
+            IP Address
+        </h3>
+
+        <div
+            class="value"
+            id="ip">
+
+            Loading...
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>
+            MAC Address
+        </h3>
+
+        <div
+            class="value"
+            id="mac">
+
+            Loading...
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>
+            Adapter Status
+        </h3>
+
+        <div
+            class="value"
+            id="status">
+
+            Loading...
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+<!-- ==================================================
+     FEATURE 4
+     NETWORK STATUS
+=================================================== -->
+
+<h2>
+    Network Status
+</h2>
+
+
+<div class="cards">
+
+
+    <div class="card">
+
+        <h3>
+            Connection Status
+        </h3>
+
+        <div
+            class="value"
+            id="connection">
+
+            Checking...
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>
+            Active Interface
+        </h3>
+
+        <div
+            class="value"
+            id="activeInterface">
+
+            Checking...
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>
+            Internet Status
+        </h3>
+
+        <div
+            class="value"
+            id="internet">
+
+            Checking...
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>
+            Monitoring Status
+        </h3>
+
+        <div
+            class="value"
+            id="monitoringStatus">
+
+            Active
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+<!-- ==================================================
+     FEATURE 5
+     NETWORK ALERTS
+=================================================== -->
+
+<h2>
+    Network Alerts
+</h2>
+
+
+<div id="alerts">
+
+    <div class="alert success">
+
+        Checking network and system status...
+
+    </div>
+
+</div>
+
+
+
+<!-- ==================================================
+     FEATURE 6
+     CONNECTED DEVICES
+=================================================== -->
+
+<h2>
+    Connected Devices
+</h2>
+
+
+<div class="table-container">
+
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>
+                    IP Address
+                </th>
+
+                <th>
+                    MAC Address
+                </th>
+
+                <th>
+                    Type
+                </th>
+
+                <th>
+                    Status
+                </th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody id="devicesTable">
+
+            <tr>
+
+                <td colspan="4">
+
+                    Scanning network...
+
+                </td>
+
+            </tr>
+
+        </tbody>
+
+    </table>
+
+
+</div>
+
+
+
+<!-- ==================================================
+     FEATURE 7
+     TRAFFIC HISTORY
+=================================================== -->
+
+<h2>
+    Traffic History
+</h2>
+
+
+<div class="chart-container">
+
+    <h2>
+        Historical Network Traffic
+    </h2>
+
+    <canvas id="historyChart"></canvas>
+
+</div>
+
+
+
+<!-- ==================================================
+     FEATURE 8
+     REPORTS
+=================================================== -->
+
+<h2>
+    Network Reports
+</h2>
+
+
+<div class="chart-container">
+
+
+    <h2>
+        Network Usage Report
+    </h2>
+
+
+    <div class="cards">
+
+
+        <div class="card">
+
+            <h3>
+                Report Date
+            </h3>
+
+            <div
+                class="value"
+                id="reportDate">
+
+                Loading...
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>
+                Total Received
+            </h3>
+
+            <div
+                class="value"
+                id="reportReceived">
+
+                0 MB
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>
+                Total Sent
+            </h3>
+
+            <div
+                class="value"
+                id="reportSent">
+
+                0 MB
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>
+                History Records
+            </h3>
+
+            <div
+                class="value"
+                id="reportRecords">
+
+                0
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <br>
+
+
+    <button onclick="generateReport()">
+
+        Generate Report
+
+    </button>
+
+
+    <a
+        href="/download-report"
+        class="download-button">
+
+        Download CSV Report
+
+    </a>
+
+
+</div>
+
+
+</div>
+
+
+<!-- =========================
+     FOOTER
+========================== -->
+
+<footer>
+
+    Network Monitoring System © 2026
+
+</footer>
+
+
+
+<script>
+
+
+// ==================================================
+// FEATURE 1
+// LIVE NETWORK TRAFFIC
+// ==================================================
+
+
+let previousReceived = null;
+
+let previousSent = null;
+
+
+const trafficChart =
+    new Chart(
+
+        document.getElementById(
+            "trafficChart"
+        ),
+
+        {
+
+            type: "line",
+
+            data: {
+
+                labels: [],
+
+                datasets: [
+
+                    {
+
+                        label:
+                            "Download (KB/s)",
+
+                        data: [],
+
+                        tension: 0.3
+
+                    },
+
+                    {
+
+                        label:
+                            "Upload (KB/s)",
+
+                        data: [],
+
+                        tension: 0.3
+
+                    }
+
+                ]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                animation: false,
+
+                scales: {
+
+                    y: {
+
+                        beginAtZero: true
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    );
+
+
+
+async function updateNetwork() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/network"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        document.getElementById(
+            "received"
+        ).innerText =
+
+            (
+                data.bytes_recv
+                / 1024
+                / 1024
+            ).toFixed(2)
+            + " MB";
+
+
+        document.getElementById(
+            "sent"
+        ).innerText =
+
+            (
+                data.bytes_sent
+                / 1024
+                / 1024
+            ).toFixed(2)
+            + " MB";
+
+
+        if (
+            previousReceived !== null
+        ) {
+
+            const download =
+
+                (
+                    data.bytes_recv
+                    -
+                    previousReceived
+                )
+                / 1024;
+
+
+            const upload =
+
+                (
+                    data.bytes_sent
+                    -
+                    previousSent
+                )
+                / 1024;
+
+
+            document.getElementById(
+                "download"
+            ).innerText =
+
+                download.toFixed(2)
+                + " KB/s";
+
+
+            document.getElementById(
+                "upload"
+            ).innerText =
+
+                upload.toFixed(2)
+                + " KB/s";
+
+
+            trafficChart.data.labels.push(
+
+                new Date()
+                    .toLocaleTimeString()
+
+            );
+
+
+            trafficChart
+                .data
+                .datasets[0]
+                .data
+                .push(download);
+
+
+            trafficChart
+                .data
+                .datasets[1]
+                .data
+                .push(upload);
+
+
+            if (
+                trafficChart
+                    .data
+                    .labels
+                    .length > 20
+            ) {
+
+                trafficChart
+                    .data
+                    .labels
+                    .shift();
+
+
+                trafficChart
+                    .data
+                    .datasets[0]
+                    .data
+                    .shift();
+
+
+                trafficChart
+                    .data
+                    .datasets[1]
+                    .data
+                    .shift();
+
+            }
+
+
+            trafficChart.update();
+
+        }
+
+
+        previousReceived =
+            data.bytes_recv;
+
+
+        previousSent =
+            data.bytes_sent;
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Network monitoring error:",
+            error
+        );
+
+    }
+
+}
+
+
+
+// ==================================================
+// FEATURE 2
+// SYSTEM MONITORING
+// ==================================================
+
+
+async function updateSystem() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/system"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        document.getElementById(
+            "cpu"
+        ).innerText =
+
+            data.cpu.toFixed(1)
+            + "%";
+
+
+        document.getElementById(
+            "memory"
+        ).innerText =
+
+            data.memory.toFixed(1)
+            + "%";
+
+
+        document.getElementById(
+            "disk"
+        ).innerText =
+
+            data.disk.toFixed(1)
+            + "%";
+
+
+        document.getElementById(
+            "hostname"
+        ).innerText =
+            data.hostname;
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "System monitoring error:",
+            error
+        );
+
+    }
+
+}
+
+
+
+// ==================================================
+// FEATURE 3
+// NETWORK INFORMATION
+// ==================================================
+
+
+async function updateNetworkInfo() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/network-info"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (data.length > 0) {
+
+
+            let network =
+                data.find(
+
+                    item =>
+
+                        item.ip !== "N/A"
+                        &&
+                        item.ip !== "127.0.0.1"
+
+                );
+
+
+            if (!network) {
+
+                network = data[0];
+
+            }
+
+
+            document.getElementById(
+                "interface"
+            ).innerText =
+                network.interface;
+
+
+            document.getElementById(
+                "ip"
+            ).innerText =
+                network.ip;
+
+
+            document.getElementById(
+                "mac"
+            ).innerText =
+                network.mac;
+
+
+            document.getElementById(
+                "status"
+            ).innerText =
+                network.status;
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Network information error:",
+            error
+        );
+
+    }
+
+}
+
+
+
+// ==================================================
+// FEATURE 4
+// NETWORK STATUS
+// ==================================================
+
+
+async function updateNetworkStatus() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/network-status"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        document.getElementById(
+            "connection"
+        ).innerText =
+            data.connection;
+
+
+        document.getElementById(
+            "activeInterface"
+        ).innerText =
+            data.interface;
+
+
+        document.getElementById(
+            "internet"
+        ).innerText =
+            data.internet;
+
+
+        document.getElementById(
+            "monitoringStatus"
+        ).innerText =
+            "Active";
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Network status error:",
+            error
+        );
+
+    }
+
+}
+
+
+
+// ==================================================
+// FEATURE 5
+// NETWORK ALERTS
+// ==================================================
+
+
+async function updateAlerts() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/alerts"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        const container =
+            document.getElementById(
+                "alerts"
+            );
+
+
+        container.innerHTML = "";
+
+
+        data.forEach(
+
+            alert => {
+
+
+                const element =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                element.className =
+                    "alert "
+                    +
+                    alert.type;
+
+
+                element.innerText =
+                    alert.message;
+
+
+                container.appendChild(
+                    element
+                );
+
+            }
+
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Alert error:",
+            error
+        );
+
+    }
+
+}
+
+
+
+// ==================================================
+// FEATURE 6
+// CONNECTED DEVICES
+// ==================================================
+
+
+async function updateDevices() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/devices"
+            );
+
+
+        const devices =
+            await response.json();
+
+
+        const table =
+            document.getElementById(
+                "devicesTable"
+            );
+
+
+        table.innerHTML = "";
+
+
+        if (
+            devices.length === 0
+        ) {
+
+            table.innerHTML = `
+
+                <tr>
+
+                    <td colspan="4">
+
+                        No connected devices detected.
+
+                    </td>
+
+                </tr>
+
+            `;
+
+            return;
+
+        }
+
+
+        devices.forEach(
+
+            device => {
+
+
+                const row =
+                    document.createElement(
+                        "tr"
+                    );
+
+
+                row.innerHTML = `
+
+                    <td>
+                        ${device.ip}
+                    </td>
+
+                    <td>
+                        ${device.mac}
+                    </td>
+
+                    <td>
+                        ${device.type}
+                    </td>
+
+                    <td class="online">
+                        ${device.status}
+                    </td>
+
+                `;
+
+
+                table.appendChild(
+                    row
+                );
+
+            }
+
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Device monitoring error:",
+            error
+        );
+
+    }
+
+}
+
+
+
+// ==================================================
+// FEATURE 7
+// SAVE TRAFFIC HISTORY
+// ==================================================
+
+
+async function saveHistory() {
+
+    try {
+
+        await fetch(
+            "/api/save-history"
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "History save error:",
+            error
+        );
+
+    }
+
+}
+
+
+
+// ==================================================
+// FEATURE 7
+// HISTORY CHART
+// ==================================================
+
+
+const historyChart =
+    new Chart(
+
+        document.getElementById(
+            "historyChart"
+        ),
+
+        {
+
+            type: "line",
+
+            data: {
+
+                labels: [],
+
+                datasets: [
+
+                    {
+
+                        label:
+                            "Received (MB)",
+
+                        data: [],
+
+                        tension: 0.3
+
+                    },
+
+                    {
+
+                        label:
+                            "Sent (MB)",
+
+                        data: [],
+
+                        tension: 0.3
+
+                    }
+
+                ]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                scales: {
+
+                    y: {
+
+                        beginAtZero: true,
+
+                        title: {
+
+                            display: true,
+
+                            text: "MB"
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    );
+
+
+
+async function updateHistory() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/history"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        historyChart
+            .data
+            .labels = [];
+
+
+        historyChart
+            .data
+            .datasets[0]
+            .data = [];
+
+
+        historyChart
+            .data
+            .datasets[1]
+            .data = [];
+
+
+        data.forEach(
+
+            item => {
+
+
+                historyChart
+                    .data
+                    .labels
+                    .push(
+                        item.timestamp
+                    );
+
+
+                historyChart
+                    .data
+                    .datasets[0]
+                    .data
+                    .push(
+
+                        item.bytes_recv
+                        / 1024
+                        / 1024
+
+                    );
+
+
+                historyChart
+                    .data
+                    .datasets[1]
+                    .data
+                    .push(
+
+                        item.bytes_sent
+                        / 1024
+                        / 1024
+
+                    );
+
+            }
+
+        );
+
+
+        historyChart.update();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "History error:",
+            error
+        );
+
+    }
+
+}
+
+
+
+// ==================================================
+// FEATURE 8
+// REPORTS
+// ==================================================
+
+
+async function generateReport() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/report"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        document.getElementById(
+            "reportDate"
+        ).innerText =
+            data.generated_at;
+
+
+        document.getElementById(
+            "reportReceived"
+        ).innerText =
+            data.total_received_mb
+            + " MB";
+
+
+        document.getElementById(
+            "reportSent"
+        ).innerText =
+            data.total_sent_mb
+            + " MB";
+
+
+        document.getElementById(
+            "reportRecords"
+        ).innerText =
+            data.records;
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Report error:",
+            error
+        );
+
+    }
+
+}
+
+
+
+// ==================================================
+// START MONITORING
+// ==================================================
+
+
+updateNetwork();
+
+updateSystem();
+
+updateNetworkInfo();
+
+updateNetworkStatus();
+
+updateAlerts();
+
+updateDevices();
+
+updateHistory();
+
+generateReport();
+
+
+// Network traffic
+setInterval(
+    updateNetwork,
+    1000
+);
+
+
+// System
+setInterval(
+    updateSystem,
+    2000
+);
+
+
+// Network information
+setInterval(
+    updateNetworkInfo,
+    5000
+);
+
+
+// Network status
+setInterval(
+    updateNetworkStatus,
+    5000
+);
+
+
+// Alerts
+setInterval(
+    updateAlerts,
+    5000
+);
+
+
+// Connected devices
+setInterval(
+    updateDevices,
+    10000
+);
+
+
+// Save history
+setInterval(
+    saveHistory,
+    10000
+);
+
+
+// Update history
+setInterval(
+    updateHistory,
+    10000
+);
+
+
+// Reports
+setInterval(
+    generateReport,
+    10000
+);
+
+
+</script>
+
+
+</body>
+
+</html>
