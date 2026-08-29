@@ -1,5 +1,15 @@
 # Network Monitoring System
 
+## 🚀 Live Demo
+
+[🌐 Open Network Monitoring System](https://network-monitoring-system-t80t.onrender.com/)
+
+## 💻 GitHub Repository
+
+https://github.com/Keerthi-Jeslin-06/Network-Monitoring-System
+
+# Network Monitoring System
+
 A web-based **Network Monitoring System** developed using **Python, Flask, HTML, CSS, and JavaScript**. The system provides a centralized dashboard for monitoring network and system information and maintaining monitoring history.
 
 ## 📌 Project Overview
