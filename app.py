@@ -35,7 +35,7 @@ DATABASE = "network_history.db"
 # ==========================================
 
 USERNAME = "admin"
-PASSWORD = "admin123"
+PASSWORD = "Keerthi@NMS2026#"
 
 
 # ==========================================
